@@ -17,8 +17,9 @@ class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyCl
     }
 
     private fun getCharacters(){
-
-    }
+        rickAndMortyClient.getAllCharacters {
+            _characters.value = it
+        }
 
 }
 
