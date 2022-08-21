@@ -9,4 +9,5 @@ object RetrofitClient {
         .baseUrl("https://rickandmortyapi.com/")
         .addConverterFactory(MoshiConverterFactory.create())
         .build()
+
 }

@@ -1,7 +1,6 @@
 package com.academy.peach.network
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -17,8 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.academy.peach.network.network.CharacterRemoteDataSource
-import com.academy.peach.network.network.model.RickAndMortyCharacterNetwork
+import com.academy.peach.network.network.service.RickAndMortyClient
+import com.academy.peach.network.model.network.response.Character
 import com.academy.peach.network.ui.characters.FeaturedCharactersViewModel
 import com.academy.peach.network.ui.characters.FeaturedCharactersViewModelFactory
 import com.academy.peach.network.ui.theme.RetrofitCallTheme
@@ -26,14 +25,14 @@ import com.academy.peach.network.ui.theme.RetrofitCallTheme
 class MainActivity : ComponentActivity() {
 
     private val viewModel: FeaturedCharactersViewModel by viewModels {
-        FeaturedCharactersViewModelFactory(CharacterRemoteDataSource())
+        FeaturedCharactersViewModelFactory(RickAndMortyClient())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
 
-            val state: List<RickAndMortyCharacterNetwork> by viewModel.characters.collectAsState(emptyList())
+            val state: List<Character> by viewModel.characters.collectAsState(emptyList())
 
             RetrofitCallTheme {
                 // A surface container using the 'background' color from the theme
@@ -50,7 +49,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CharactersList(characters: List<RickAndMortyCharacterNetwork>) {
+fun CharactersList(characters: List<Character>) {
 
     LazyColumn{
         items(characters){ character ->
@@ -60,7 +59,7 @@ fun CharactersList(characters: List<RickAndMortyCharacterNetwork>) {
 }
 
 @Composable
-fun CharacterCard(character: RickAndMortyCharacterNetwork) {
+fun CharacterCard(character: Character) {
     Column(modifier = Modifier.fillMaxWidth()) {
         AsyncImage(
             model = character.image, contentDescription = character.name,
