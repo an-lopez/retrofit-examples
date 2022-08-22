@@ -7,23 +7,24 @@ import com.academy.peach.network.model.network.response.Character
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class FeaturedCharactersViewModel(private val characterRemoteDataSource: RickAndMortyClient): ViewModel() {
+class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyClient): ViewModel() {
+
+    private val _characters = MutableStateFlow<List<Character>>(emptyList())
+    val characters: StateFlow<List<Character>> = _characters
 
     init {
         getCharacters()
     }
 
-    private val _characters = MutableStateFlow<List<Character>>(emptyList())
-    val characters: StateFlow<List<Character>> = _characters
+    private fun getCharacters(){
 
-    fun getCharacters(){
     }
 
 }
 
-class FeaturedCharactersViewModelFactory(private val characterRemoteDataSource: RickAndMortyClient): ViewModelProvider.Factory {
+class FeaturedCharactersViewModelFactory(private val rickAndMortyClient: RickAndMortyClient): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return modelClass.getConstructor(RickAndMortyClient::class.java).newInstance(characterRemoteDataSource)
+        return modelClass.getConstructor(RickAndMortyClient::class.java).newInstance(rickAndMortyClient)
     }
 
 }
