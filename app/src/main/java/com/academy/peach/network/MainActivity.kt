@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.academy.peach.network.network.service.RickAndMortyClient
 import com.academy.peach.network.model.network.response.Character
+import com.academy.peach.network.network.RetrofitClient
+import com.academy.peach.network.network.service.RickAndMortyService
 import com.academy.peach.network.ui.characters.FeaturedCharactersViewModel
 import com.academy.peach.network.ui.characters.FeaturedCharactersViewModelFactory
 import com.academy.peach.network.ui.theme.RetrofitCallTheme
@@ -25,7 +27,7 @@ import com.academy.peach.network.ui.theme.RetrofitCallTheme
 class MainActivity : ComponentActivity() {
 
     private val viewModel: FeaturedCharactersViewModel by viewModels {
-        FeaturedCharactersViewModelFactory(RickAndMortyClient())
+        FeaturedCharactersViewModelFactory(RickAndMortyClient(RetrofitClient.retrofitClient.create(RickAndMortyService::class.java)))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
