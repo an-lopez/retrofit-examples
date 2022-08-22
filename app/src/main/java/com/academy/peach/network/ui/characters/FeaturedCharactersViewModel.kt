@@ -2,10 +2,13 @@ package com.academy.peach.network.ui.characters
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import com.academy.peach.network.network.service.RickAndMortyClient
 import com.academy.peach.network.model.network.response.Character
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyClient): ViewModel() {
 
@@ -17,7 +20,9 @@ class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyCl
     }
 
     private fun getCharacters(){
-
+        viewModelScope.launch(Dispatchers.IO) {
+            _characters.value = rickAndMortyClient.getCharacters().results
+        }
     }
 
 }
