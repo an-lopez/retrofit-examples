@@ -1,4 +1,4 @@
 package com.academy.peach.network.network.service
 
-class RickAndMortyClient {
+class RickAndMortyClient(private val rickAndMortyService: RickAndMortyService) {
 }
