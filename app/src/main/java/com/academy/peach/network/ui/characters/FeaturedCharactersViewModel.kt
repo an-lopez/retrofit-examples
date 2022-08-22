@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.academy.peach.network.network.service.RickAndMortyClient
 import com.academy.peach.network.model.network.response.Character
+import com.academy.peach.network.model.network.response.ModelWrapper
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -17,7 +20,19 @@ class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyCl
     }
 
     private fun getCharacters(){
+        rickAndMortyClient
+            .getAllCharacters()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { onSuccess: ModelWrapper?, onError: Throwable? ->
+                onSuccess?.let {
+                    _characters.value = it.results
+                }
 
+                onError?.let{
+                    _characters.value = emptyList()
+                }
+            }
     }
 
 }
