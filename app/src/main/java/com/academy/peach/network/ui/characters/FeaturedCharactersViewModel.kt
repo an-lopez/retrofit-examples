@@ -10,10 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyClient): ViewModel() {
+class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyClient) :
+    ViewModel() {
 
-    private val _characters = MutableStateFlow<List<Character>>(emptyList())
     val characters: StateFlow<List<Character>> = _characters
+    private val _characters = MutableStateFlow(CharacterUiState())
+    val characters: StateFlow<CharacterUiState> = _characters
 
     init {
         getCharacters()
@@ -27,9 +29,17 @@ class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyCl
 
 }
 
-class FeaturedCharactersViewModelFactory(private val rickAndMortyClient: RickAndMortyClient): ViewModelProvider.Factory {
+data class CharacterUiState(
+    val characters: List<Character> = emptyList(),
+    val errorMessage: String? = null,
+    val exception: Throwable? = null
+)
+
+class FeaturedCharactersViewModelFactory(private val rickAndMortyClient: RickAndMortyClient) :
+    ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return modelClass.getConstructor(RickAndMortyClient::class.java).newInstance(rickAndMortyClient)
+        return modelClass.getConstructor(RickAndMortyClient::class.java)
+            .newInstance(rickAndMortyClient)
     }
 
 }

@@ -7,12 +7,14 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -20,6 +22,7 @@ import com.academy.peach.network.network.service.RickAndMortyClient
 import com.academy.peach.network.model.network.response.Character
 import com.academy.peach.network.network.RetrofitClient
 import com.academy.peach.network.network.service.RickAndMortyService
+import com.academy.peach.network.ui.characters.CharacterUiState
 import com.academy.peach.network.ui.characters.FeaturedCharactersViewModel
 import com.academy.peach.network.ui.characters.FeaturedCharactersViewModelFactory
 import com.academy.peach.network.ui.theme.RetrofitCallTheme
@@ -27,14 +30,20 @@ import com.academy.peach.network.ui.theme.RetrofitCallTheme
 class MainActivity : ComponentActivity() {
 
     private val viewModel: FeaturedCharactersViewModel by viewModels {
-        FeaturedCharactersViewModelFactory(RickAndMortyClient(RetrofitClient.retrofitClient.create(RickAndMortyService::class.java)))
+        FeaturedCharactersViewModelFactory(
+            RickAndMortyClient(
+                RetrofitClient.retrofitClient.create(
+                    RickAndMortyService::class.java
+                )
+            )
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
 
-            val state: List<Character> by viewModel.characters.collectAsState(emptyList())
+            val state: CharacterUiState by viewModel.characters.collectAsState()
 
             RetrofitCallTheme {
                 // A surface container using the 'background' color from the theme
@@ -42,7 +51,36 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    CharactersList(state)
+
+                    Column(Modifier.fillMaxSize()) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(
+                                4.dp,
+                                Alignment.CenterHorizontally
+                            )
+                        ) {
+                            Button(onClick = viewModel::getCharacters) {
+                                Text(text = "Characters")
+                            }
+                            Button(onClick = viewModel::getError) {
+                                Text(text = "Error")
+                            }
+                            Button(onClick = viewModel::getException) {
+                                Text(text = "Exception")
+                            }
+                        }
+
+                        CharactersList(state.characters)
+
+                        state.errorMessage?.let {
+                            Text(text = it)
+                        }
+
+                        state.exception?.let {
+                            Text(text = it.message ?: "Empty exception")
+                        }
+                    }
                 }
             }
         }
@@ -52,9 +90,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CharactersList(characters: List<Character>) {
-
-    LazyColumn{
-        items(characters){ character ->
+    LazyColumn {
+        items(characters) { character ->
             CharacterCard(character)
         }
     }
@@ -65,7 +102,10 @@ fun CharacterCard(character: Character) {
     Column(modifier = Modifier.fillMaxWidth()) {
         AsyncImage(
             model = character.image, contentDescription = character.name,
-        modifier = Modifier.height(48.dp).width(48.dp))
+            modifier = Modifier
+                .height(48.dp)
+                .width(48.dp)
+        )
         Text(text = character.name)
     }
 }
