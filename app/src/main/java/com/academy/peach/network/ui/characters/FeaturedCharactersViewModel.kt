@@ -8,6 +8,8 @@ import com.academy.peach.network.model.network.response.Character
 import com.academy.peach.network.util.ApiError
 import com.academy.peach.network.util.ApiException
 import com.academy.peach.network.util.ApiSuccess
+import com.academy.peach.network.util.onError
+import com.academy.peach.network.util.onSuccess
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,11 @@ class FeaturedCharactersViewModel(private val rickAndMortyClient: RickAndMortyCl
 
     fun getCharacters() {
         viewModelScope.launch(Dispatchers.IO) {
+            rickAndMortyClient.getCharacters().onSuccess {
+
+            }.onError{ code, message ->
+
+            }
             _characters.value = when (val result = rickAndMortyClient.getCharacters()) {
                 is ApiSuccess -> CharacterUiState(characters = result.data.results)
                 is ApiException -> CharacterUiState(exception = result.e)
