@@ -1,4 +1,4 @@
-package com.academy.peach.network.ui.theme
+package com.academy.peach.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
