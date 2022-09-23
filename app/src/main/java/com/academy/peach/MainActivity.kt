@@ -27,27 +27,18 @@ import com.academy.peach.model.network.response.NetworkCharacter
 import com.academy.peach.network.RetrofitClientImpl
 import com.academy.peach.repository.CharacterRepositoryImpl
 import com.academy.peach.ui.theme.RetrofitCallTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: CharactersViewModel by viewModels{
-        CharactersViewModelFactory(
-            LoadCharactersUseCase(
-                CharacterRepositoryImpl(
-                    RetrofitClientImpl()
-                )
-            )
-        )
-    }
+    private val viewModel: CharactersViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         setContent {
-
             val characters by viewModel.characters.collectAsState()
-
             RetrofitCallTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
