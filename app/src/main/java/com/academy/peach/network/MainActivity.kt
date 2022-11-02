@@ -17,7 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import coil.compose.AsyncImage
+import com.academy.peach.network.database.RickAndMortyDatabase
+import com.academy.peach.network.domain.CharacterView
 import com.academy.peach.network.network.service.RickAndMortyClient
 import com.academy.peach.network.model.network.response.Character
 import com.academy.peach.network.network.RetrofitClient
@@ -26,18 +30,12 @@ import com.academy.peach.network.ui.characters.CharacterUiState
 import com.academy.peach.network.ui.characters.FeaturedCharactersViewModel
 import com.academy.peach.network.ui.characters.FeaturedCharactersViewModelFactory
 import com.academy.peach.network.ui.theme.RetrofitCallTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: FeaturedCharactersViewModel by viewModels {
-        FeaturedCharactersViewModelFactory(
-            RickAndMortyClient(
-                RetrofitClient.retrofitClient.create(
-                    RickAndMortyService::class.java
-                )
-            )
-        )
-    }
+    private val viewModel: FeaturedCharactersViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,12 +61,7 @@ class MainActivity : ComponentActivity() {
                             Button(onClick = viewModel::getCharacters) {
                                 Text(text = "Characters")
                             }
-                            Button(onClick = viewModel::getError) {
-                                Text(text = "Error")
-                            }
-                            Button(onClick = viewModel::getException) {
-                                Text(text = "Exception")
-                            }
+
                         }
 
                         CharactersList(state.characters)
@@ -89,7 +82,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CharactersList(characters: List<Character>) {
+fun CharactersList(characters: List<CharacterView>) {
     LazyColumn {
         items(characters) { character ->
             CharacterCard(character)
@@ -98,10 +91,10 @@ fun CharactersList(characters: List<Character>) {
 }
 
 @Composable
-fun CharacterCard(character: Character) {
+fun CharacterCard(character: CharacterView) {
     Column(modifier = Modifier.fillMaxWidth()) {
         AsyncImage(
-            model = character.image, contentDescription = character.name,
+            model = character.url, contentDescription = character.name,
             modifier = Modifier
                 .height(48.dp)
                 .width(48.dp)
